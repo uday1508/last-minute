@@ -1,4 +1,4 @@
-export type ThemeKey = 'midnight' | 'forest' | 'ocean' | 'sunset' | 'sakura';
+export type ThemeKey = 'midnight' | 'forest' | 'ocean' | 'sunset' | 'sakura' | 'cyberpunk' | 'neon';
 
 export interface ThemeColors {
   primary: string;
@@ -18,6 +18,79 @@ export interface ThemeColors {
   progressBg: string;
   shadow: string;
 }
+
+export interface BackgroundPreset {
+  id: string;
+  name: string;
+  uri: string;
+  thumbnail: string;
+}
+
+export const PICTURE_PRESETS: BackgroundPreset[] = [
+  {
+    id: 'midnight_nebula',
+    name: 'Midnight Nebula',
+    uri: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1200&auto=format&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=300&auto=format&fit=crop',
+  },
+  {
+    id: 'cyberpunk_city',
+    name: 'Neon Cyberpunk',
+    uri: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=300&auto=format&fit=crop',
+  },
+  {
+    id: 'deep_forest',
+    name: 'Emerald Forest',
+    uri: 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1200&auto=format&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=300&auto=format&fit=crop',
+  },
+  {
+    id: 'ocean_waves',
+    name: 'Ocean Waves',
+    uri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=300&auto=format&fit=crop',
+  },
+  {
+    id: 'golden_sunset',
+    name: 'Golden Sunset',
+    uri: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?q=80&w=1200&auto=format&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?q=80&w=300&auto=format&fit=crop',
+  },
+  {
+    id: 'sakura_blossom',
+    name: 'Sakura Blossom',
+    uri: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?q=80&w=1200&auto=format&fit=crop',
+    thumbnail: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?q=80&w=300&auto=format&fit=crop',
+  },
+];
+
+export const VIDEO_PRESETS: BackgroundPreset[] = [
+  {
+    id: 'cosmic_aurora',
+    name: 'Cosmic Aurora',
+    uri: 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-the-night-sky-4000-large.mp4',
+    thumbnail: 'https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?q=80&w=300&auto=format&fit=crop',
+  },
+  {
+    id: 'ambient_waves',
+    name: 'Ambient Waves',
+    uri: 'https://assets.mixkit.co/videos/preview/mixkit-abstract-video-of-blue-and-purple-liquid-43204-large.mp4',
+    thumbnail: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=300&auto=format&fit=crop',
+  },
+  {
+    id: 'digital_rain',
+    name: 'Digital Particle Flow',
+    uri: 'https://assets.mixkit.co/videos/preview/mixkit-glowing-lines-and-dots-in-a-network-42588-large.mp4',
+    thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=300&auto=format&fit=crop',
+  },
+  {
+    id: 'rainy_bokeh',
+    name: 'Rainy City Lights',
+    uri: 'https://assets.mixkit.co/videos/preview/mixkit-rain-drops-on-a-window-pane-at-night-41559-large.mp4',
+    thumbnail: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=300&auto=format&fit=crop',
+  },
+];
 
 export const themes: Record<ThemeKey, { dark: ThemeColors; light: ThemeColors }> = {
   midnight: {
@@ -210,4 +283,81 @@ export const themes: Record<ThemeKey, { dark: ThemeColors; light: ThemeColors }>
       shadow: 'rgba(236, 72, 153, 0.1)',
     },
   },
+  cyberpunk: {
+    dark: {
+      primary: '#00F0FF',
+      secondary: '#FF007F',
+      background: '#090915',
+      card: '#12122b',
+      text: '#FFFFFF',
+      subtext: '#8F90A6',
+      accent: '#FFE600',
+      border: '#242454',
+      success: '#00FF9D',
+      info: '#00F0FF',
+      warning: '#FFB800',
+      error: '#FF0055',
+      cardBorder: '#292963',
+      buttonText: '#000000',
+      progressBg: '#1A1A3A',
+      shadow: 'rgba(0, 240, 255, 0.2)',
+    },
+    light: {
+      primary: '#00A3FF',
+      secondary: '#E60073',
+      background: '#F0F4F8',
+      card: '#FFFFFF',
+      text: '#0F172A',
+      subtext: '#64748B',
+      accent: '#FF007F',
+      border: '#E2E8F0',
+      success: '#10B981',
+      info: '#00A3FF',
+      warning: '#F59E0B',
+      error: '#EF4444',
+      cardBorder: '#CBD5E1',
+      buttonText: '#FFFFFF',
+      progressBg: '#E2E8F0',
+      shadow: 'rgba(0, 163, 255, 0.1)',
+    },
+  },
+  neon: {
+    dark: {
+      primary: '#A855F7',
+      secondary: '#22C55E',
+      background: '#0D0914',
+      card: '#181224',
+      text: '#FFFFFF',
+      subtext: '#9CA3AF',
+      accent: '#F43F5E',
+      border: '#322348',
+      success: '#22C55E',
+      info: '#3B82F6',
+      warning: '#EAB308',
+      error: '#F43F5E',
+      cardBorder: '#3E2A59',
+      buttonText: '#FFFFFF',
+      progressBg: '#2D1B44',
+      shadow: 'rgba(168, 85, 247, 0.3)',
+    },
+    light: {
+      primary: '#9333EA',
+      secondary: '#16A34A',
+      background: '#FAF5FF',
+      card: '#FFFFFF',
+      text: '#1E1B4B',
+      subtext: '#6B7280',
+      accent: '#E11D48',
+      border: '#F3E8FF',
+      success: '#16A34A',
+      info: '#2563EB',
+      warning: '#D97706',
+      error: '#DC2626',
+      cardBorder: '#E9D5FF',
+      buttonText: '#FFFFFF',
+      progressBg: '#F3E8FF',
+      shadow: 'rgba(147, 51, 234, 0.1)',
+    },
+  },
 };
+

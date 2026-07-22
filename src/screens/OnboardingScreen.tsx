@@ -10,7 +10,9 @@ import {
   useColorScheme,
   TextInput,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
@@ -23,6 +25,7 @@ import Animated, {
   withTiming,
   withDelay,
   useAnimatedRef,
+  SharedValue,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -122,11 +125,40 @@ const renderTitle = (title: string, highlight: string, highlightColor: string, i
   );
 };
 
+// Google Logo SVG component
+const GoogleIcon = ({ size = 20 }: { size?: number }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path
+      fill="#4285F4"
+      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+    />
+    <Path
+      fill="#34A853"
+      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+    />
+    <Path
+      fill="#FBBC05"
+      d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.62z"
+    />
+    <Path
+      fill="#EA4335"
+      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+    />
+  </Svg>
+);
+
 export const OnboardingScreen = () => {
   const setOnboardingCompleted = useAppStore((state) => state.setOnboardingCompleted);
+  const signInWithGoogleAction = useAppStore((state) => state.signInWithGoogleAction);
+  const isAuthenticating = useAppStore((state) => state.isAuthenticating);
   const systemColorScheme = useColorScheme();
   const isDark = systemColorScheme === 'dark';
   const insets = useSafeAreaInsets();
+
+  const handleGoogleSignIn = async () => {
+    hapticHeavy();
+    await signInWithGoogleAction();
+  };
 
   // Base theme colors for onboarding splash screens
   const colors = isDark ? themes.midnight.dark : themes.midnight.light;
@@ -222,18 +254,39 @@ export const OnboardingScreen = () => {
 
       {/* Bottom Control Bar */}
       <View style={[styles.footer, { bottom: insets.bottom + 20 }]}>
-        {/* If last screen, show Lets Get Started, else show Pagination & Next Button */}
+        {/* If last screen, show Continue with Google and Guest options, else show Pagination & Next Button */}
         {activeIndex === SLIDES.length - 1 ? (
           <View style={styles.lastPageFooter}>
             <TouchableOpacity
-              onPress={() => {
-                hapticHeavy();
-                handleNext();
-              }}
+              onPress={handleGoogleSignIn}
+              disabled={isAuthenticating}
               activeOpacity={0.85}
-              style={[styles.startButton, { shadowColor: colors.primary }]}
+              style={[
+                styles.googleButton,
+                { backgroundColor: '#FFFFFF' },
+              ]}
             >
-              <Text style={styles.startButtonText}>Let's Get Started</Text>
+              {isAuthenticating ? (
+                <ActivityIndicator color="#1F2937" size="small" />
+              ) : (
+                <View style={styles.googleBtnInner}>
+                  <GoogleIcon size={20} />
+                  <Text style={styles.googleButtonText}>Continue with Google</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                hapticMedium();
+                setOnboardingCompleted(true);
+              }}
+              activeOpacity={0.7}
+              style={styles.guestButton}
+            >
+              <Text style={[styles.guestButtonText, { color: isDark ? 'rgba(255,255,255,0.7)' : '#6B7280' }]}>
+                Continue as Guest
+              </Text>
             </TouchableOpacity>
 
             {/* Dots below the button */}
@@ -260,7 +313,7 @@ export const OnboardingScreen = () => {
 };
 
 // --- PAGINATION DOTS WITH DYNAMIC ACCENT COLORS ---
-const PaginationDots = ({ scrollX, isDark }: { scrollX: Animated.SharedValue<number>; isDark: boolean }) => {
+const PaginationDots = ({ scrollX, isDark }: { scrollX: SharedValue<number>; isDark: boolean }) => {
   return (
     <View style={styles.dotsContainer}>
       {SLIDES.map((_, index) => {
@@ -315,7 +368,7 @@ const PaginationDots = ({ scrollX, isDark }: { scrollX: Animated.SharedValue<num
 };
 
 // --- SLIDE GRAPHICS COMPONENT ---
-const SlideGraphic = ({ index, isDark, scrollX }: { index: number; isDark: boolean; scrollX: Animated.SharedValue<number> }) => {
+const SlideGraphic = ({ index, isDark, scrollX }: { index: number; isDark: boolean; scrollX: SharedValue<number> }) => {
   const floatAnim = useSharedValue(0);
 
   React.useEffect(() => {
@@ -671,22 +724,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
-  startButton: {
+  googleButton: {
     width: '100%',
     height: 56,
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    backgroundColor: '#7C3AED',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  startButtonText: {
-    color: '#FFFFFF',
+  googleBtnInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  googleButtonText: {
+    color: '#1F2937',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
     fontFamily: 'Outfit-Bold',
+    marginLeft: 10,
+  },
+  guestButton: {
+    marginTop: 14,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  guestButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: 'Outfit-Medium',
   },
   dotsBelowContainer: {
     marginTop: 24,
@@ -889,5 +959,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
+  },
+  slideBgImage: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  slideBgImageInner: {
+    borderRadius: 24,
+    resizeMode: 'cover',
   },
 });

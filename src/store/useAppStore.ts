@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { UserProfile, signInWithGoogle, signOutGoogle } from '../services/authService';
 
 export interface ChecklistTask {
   id: string;
@@ -7,8 +8,13 @@ export interface ChecklistTask {
 }
 
 interface AppState {
+  user: UserProfile | null;
+  isAuthenticated: boolean;
+  isAuthenticating: boolean;
   isOnboardingCompleted: boolean;
   setOnboardingCompleted: (value: boolean) => void;
+  signInWithGoogleAction: () => Promise<boolean>;
+  signOutAction: () => Promise<void>;
   tasks: ChecklistTask[];
   toggleTask: (id: string) => void;
   resetTasks: () => void;
@@ -30,8 +36,40 @@ const initialTasks: ChecklistTask[] = [
 ];
 
 export const useAppStore = create<AppState>((set) => ({
+  user: null,
+  isAuthenticated: false,
+  isAuthenticating: false,
   isOnboardingCompleted: false,
+
   setOnboardingCompleted: (isOnboardingCompleted) => set({ isOnboardingCompleted }),
+
+  signInWithGoogleAction: async () => {
+    set({ isAuthenticating: true });
+    try {
+      const userProfile = await signInWithGoogle();
+      set({
+        user: userProfile,
+        isAuthenticated: true,
+        isOnboardingCompleted: true,
+        isAuthenticating: false,
+      });
+      return true;
+    } catch (error) {
+      console.warn('Sign-in failed:', error);
+      set({ isAuthenticating: false });
+      return false;
+    }
+  },
+
+  signOutAction: async () => {
+    await signOutGoogle();
+    set({
+      user: null,
+      isAuthenticated: false,
+      isOnboardingCompleted: false,
+    });
+  },
+
   tasks: initialTasks,
   toggleTask: (id) =>
     set((state) => ({
